@@ -8,8 +8,8 @@ internal class RemoveMulConverterTest : BaseConverterTest<Int, AddMulExpr, AddEx
 
     override val cases: List<Pair<AddMulExpr, AddExpr>> = listOf(
 
-        // original: 3*3
-        // expected: 3+(3+3)
+        // original: 2*3
+        // expected: 3+3
         Pair(
             AddMulExpr.Mul(
                 AddMulExpr.Num(2),
