@@ -66,7 +66,7 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
         // v = operands.second
         val operands = when (lhsConverted) {
             is AddExpr.Add -> Pair(lhsConverted.p1, lhsConverted.p2)
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalStateException()
         }
 
         // Create u*e and v*e, where e is the right hand side.
@@ -76,7 +76,7 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
         // Combine them back together.
         val result = when (lhsConverted) {
             is AddExpr.Add -> AddMulExpr.Add(lhsResult, rhsResult)
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalStateException()
         }
 
         // Finally, convert the result to the desired format.
