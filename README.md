@@ -5,8 +5,8 @@ an der Technischen Hochschule Köln.
 
 ## Taschenrechner
 
-| Datum | Paket |
-|---|---|
+| Datum | Paket
+|---|---
 | 14.04.2021 | [`calculator`](src/main/kotlin/calculator)
 
 * Abstrakte Syntaxbäume (AST) zur Berechnung einfacher mathematischer Ausdrücke
@@ -19,3 +19,6 @@ an der Technischen Hochschule Köln.
     [[RemoveNegConverter](src/main/kotlin/calculator/RemoveNegConverter.kt)]
   - Umwandlung einer Multiplikation in reine Addition.
     [[RemoveMulConverter](src/main/kotlin/calculator/RemoveMulConverter.kt)]
+
+Notizen:
+* [01-calculator-simplify-multiplication.jpg](notes/01-calculator-simplify-multiplication.jpg)
