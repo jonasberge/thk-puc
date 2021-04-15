@@ -5,7 +5,7 @@ plugins {
     application
 }
 
-group = "me.creek"
+group = "de.j13g"
 version = "1.0-SNAPSHOT"
 
 repositories {
