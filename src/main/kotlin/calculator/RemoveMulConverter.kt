@@ -1,7 +1,6 @@
 package calculator
 
 import calculator.base.Converter
-import java.lang.IllegalArgumentException
 import java.lang.UnsupportedOperationException
 
 class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
@@ -21,29 +20,48 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
 
         // 1. First operand is a number
         if (expr.p1 is AddMulExpr.Num)
-            return sumExpr(expr.p1.v, conv(expr.p2))
+            return sumExpr(expr.p1.v, expr.p2)
 
         // 2. Second operand is a number
         if (expr.p2 is AddMulExpr.Num)
-            return sumExpr(expr.p2.v, conv(expr.p1))
+            return sumExpr(expr.p2.v, expr.p1)
 
         // 3. Both operands are expressions
         return simplify(expr.p1, expr.p2)
     }
 
+    // positive multiplier:
     // 3*e = e + (e + e)
     // 5*e = e + (e + (e + (e + e)))
     // N*e = e + (e + (e + ...)) with N e's
     // N*e = sum(N, e)
-    private fun sumExpr(amount: Int, expr: AddExpr) : AddExpr {
-        if (amount == 0) throw UnsupportedOperationException()
-        if (amount < 0) throw IllegalArgumentException()
+    // negative multiplier:
+    // (-1)*e = -e
+    // (-3)*e = (-e)+((-e)+(-e))
+    private fun sumExpr(multiplier: Int, expr: AddMulExpr) : AddExpr {
+        if (multiplier == 0)
+            throw UnsupportedOperationException()
 
-        var result = expr
+        var amount = multiplier
+        var original = conv(expr)
+
+        if (multiplier < 0) {
+            original = negate(original)
+            amount = -multiplier
+        }
+
+        var result = original
         for (i in 1 until amount)
-            result = AddExpr.Add(expr, result)
+            result = AddExpr.Add(original, result)
 
         return result
+    }
+
+    private fun negate(expr: AddExpr) : AddExpr {
+        return when (expr) {
+            is AddExpr.Add -> AddExpr.Add(negate(expr.p1), negate(expr.p2))
+            is AddExpr.Num -> AddExpr.Num(-expr.v)
+        }
     }
 
     // (1+2)*(3+4) = 1*(3+4)+2*(3+4)
@@ -59,7 +77,7 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
         if (lhsConverted is AddExpr.Num)
             // In case the conversion yields a number
             // we can just sum the expression that many times.
-            return sumExpr(lhsConverted.v, conv(rhsOriginal))
+            return sumExpr(lhsConverted.v, rhsOriginal)
 
         // Extract u and v.
         // u = operands.first

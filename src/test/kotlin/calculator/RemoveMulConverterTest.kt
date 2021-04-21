@@ -151,6 +151,81 @@ internal class RemoveMulConverterTest : BaseConverterTest<Int, AddMulExpr, AddEx
             )
         ),
 
+        // original: ((1+1)+(1+1))*((1+1)+(1+1))
+        // expected: (1+1)*((1+1)+(1+1)) + (1+1)*((1+1)+(1+1))
+        //       <=> (1*((1+1)+(1+1)) + 1*((1+1)+(1+1))) + (1*((1+1)+(1+1)) + 1*((1+1)+(1+1)))
+        //       <=> ( ((1+1)+(1+1)) + ((1+1)+(1+1)) ) + ( ((1+1)+(1+1)) + ((1+1)+(1+1)) )
+        Pair(
+            AddMulExpr.Mul(
+                AddMulExpr.Add(
+                    AddMulExpr.Add(
+                        AddMulExpr.Num(1),
+                        AddMulExpr.Num(1)
+                    ),
+                    AddMulExpr.Add(
+                        AddMulExpr.Num(1),
+                        AddMulExpr.Num(1)
+                    )
+                ),
+                AddMulExpr.Add(
+                    AddMulExpr.Add(
+                        AddMulExpr.Num(1),
+                        AddMulExpr.Num(1)
+                    ),
+                    AddMulExpr.Add(
+                        AddMulExpr.Num(1),
+                        AddMulExpr.Num(1)
+                    )
+                )
+            ),
+            AddExpr.Add(
+                AddExpr.Add(
+                    AddExpr.Add(
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        ),
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        )
+                    ),
+                    AddExpr.Add(
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        ),
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        )
+                    )
+                ),
+                AddExpr.Add(
+                    AddExpr.Add(
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        ),
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        )
+                    ),
+                    AddExpr.Add(
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        ),
+                        AddExpr.Add(
+                            AddExpr.Num(1),
+                            AddExpr.Num(1)
+                        )
+                    )
+                )
+            )
+        ),
+
         // original: (1*1)*(1*1)
         // expected: 1
         Pair(
@@ -165,6 +240,90 @@ internal class RemoveMulConverterTest : BaseConverterTest<Int, AddMulExpr, AddEx
                 )
             ),
             AddExpr.Num(1)
-        )
+        ),
+
+        // original: (-1)*2
+        // expected: -2
+        Pair(
+            AddMulExpr.Mul(
+                AddMulExpr.Num(-1),
+                AddMulExpr.Num(2)
+            ),
+            AddExpr.Num(-2)
+        ),
+
+        // original: (-1)*(1+2)
+        // expected: -1-2
+        Pair(
+            AddMulExpr.Mul(
+                AddMulExpr.Num(-1),
+                AddMulExpr.Add(
+                    AddMulExpr.Num(1),
+                    AddMulExpr.Num(2)
+                )
+            ),
+            AddExpr.Add(
+                AddExpr.Num(-1),
+                AddExpr.Num(-2)
+            )
+        ),
+
+        // original: (-1)*(1*2)
+        // expected: -2
+        Pair(
+            AddMulExpr.Mul(
+                AddMulExpr.Num(-1),
+                AddMulExpr.Mul(
+                    AddMulExpr.Num(1),
+                    AddMulExpr.Num(2)
+                )
+            ),
+            AddExpr.Num(-2)
+        ),
+
+        // original: (-2)*(1+2)
+        // expected: ((-1)+(-2))+((-1)+(-2))
+        Pair(
+            AddMulExpr.Mul(
+                AddMulExpr.Num(-2),
+                AddMulExpr.Add(
+                    AddMulExpr.Num(1),
+                    AddMulExpr.Num(2)
+                )
+            ),
+            AddExpr.Add(
+                AddExpr.Add(
+                    AddExpr.Num(-1),
+                    AddExpr.Num(-2)
+                ),
+                AddExpr.Add(
+                    AddExpr.Num(-1),
+                    AddExpr.Num(-2)
+                )
+            )
+        ),
+
+        // original: (-1)*((1+2)+3)
+        // expected: (-(1+2))+(-3)
+        //       <=> ((-1)+(-2))+(-3)
+        Pair(
+            AddMulExpr.Mul(
+                AddMulExpr.Num(-1),
+                AddMulExpr.Add(
+                    AddMulExpr.Add(
+                        AddMulExpr.Num(1),
+                        AddMulExpr.Num(2)
+                    ),
+                    AddMulExpr.Num(3)
+                )
+            ),
+            AddExpr.Add(
+                AddExpr.Add(
+                    AddExpr.Num(-1),
+                    AddExpr.Num(-2)
+                ),
+                AddExpr.Num(-3)
+            )
+        ),
     )
 }
