@@ -1,7 +1,6 @@
 package calculator
 
 import calculator.base.Converter
-import java.lang.UnsupportedOperationException
 
 class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
 
@@ -20,11 +19,11 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
 
         // 1. First operand is a number
         if (expr.p1 is AddMulExpr.Num)
-            return sumExpr(expr.p1.v, expr.p2)
+            return multiply(expr.p1.v, expr.p2)
 
         // 2. Second operand is a number
         if (expr.p2 is AddMulExpr.Num)
-            return sumExpr(expr.p2.v, expr.p1)
+            return multiply(expr.p2.v, expr.p1)
 
         // 3. Both operands are expressions
         return simplify(expr.p1, expr.p2)
@@ -38,7 +37,7 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
     // negative multiplier:
     // (-1)*e = -e
     // (-3)*e = (-e)+((-e)+(-e))
-    private fun sumExpr(multiplier: Int, expr: AddMulExpr) : AddExpr {
+    private fun multiply(multiplier: Int, expr: AddMulExpr) : AddExpr {
         if (multiplier == 0)
             return AddExpr.Num(0)
 
@@ -77,7 +76,7 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
         if (lhsConverted is AddExpr.Num)
             // In case the conversion yields a number
             // we can just sum the expression that many times.
-            return sumExpr(lhsConverted.v, rhsOriginal)
+            return multiply(lhsConverted.v, rhsOriginal)
 
         // Extract u and v.
         // u = operands.first
