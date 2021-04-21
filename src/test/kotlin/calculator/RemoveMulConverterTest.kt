@@ -325,5 +325,21 @@ internal class RemoveMulConverterTest : BaseConverterTest<Int, AddMulExpr, AddEx
                 AddExpr.Num(-3)
             )
         ),
+
+        // original: 1+(0*6)
+        // expected: 1+0
+        Pair(
+            AddMulExpr.Add(
+                AddMulExpr.Num(1),
+                AddMulExpr.Mul(
+                    AddMulExpr.Num(0),
+                    AddMulExpr.Num(6)
+                )
+            ),
+            AddExpr.Add(
+                AddExpr.Num(1),
+                AddExpr.Num(0)
+            )
+        ),
     )
 }

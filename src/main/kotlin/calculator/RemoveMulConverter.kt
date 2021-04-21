@@ -40,7 +40,7 @@ class RemoveMulConverter : Converter<AddMulExpr, AddExpr> {
     // (-3)*e = (-e)+((-e)+(-e))
     private fun sumExpr(multiplier: Int, expr: AddMulExpr) : AddExpr {
         if (multiplier == 0)
-            throw UnsupportedOperationException()
+            return AddExpr.Num(0)
 
         var amount = multiplier
         var original = conv(expr)
